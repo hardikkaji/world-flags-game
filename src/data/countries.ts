@@ -42,6 +42,8 @@ export const countries: Country[] = [
   { code: "CO", name: "Colombia", capital: "Bogotá", emoji: "🇨🇴" },
   { code: "KM", name: "Comoros", capital: "Moroni", emoji: "🇰🇲" },
   { code: "CG", name: "Congo", capital: "Brazzaville", emoji: "🇨🇬" },
+  { code: "CD", name: "DR Congo", capital: "Kinshasa", emoji: "🇨🇩" },
+  { code: "CI", name: "Côte d'Ivoire", capital: "Yamoussoukro", emoji: "🇨🇮" },
   { code: "CR", name: "Costa Rica", capital: "San José", emoji: "🇨🇷" },
   { code: "HR", name: "Croatia", capital: "Zagreb", emoji: "🇭🇷" },
   { code: "CU", name: "Cuba", capital: "Havana", emoji: "🇨🇺" },
@@ -192,4 +194,7 @@ export const countries: Country[] = [
   { code: "YE", name: "Yemen", capital: "Sanaa", emoji: "🇾🇪" },
   { code: "ZM", name: "Zambia", capital: "Lusaka", emoji: "🇿🇲" },
   { code: "ZW", name: "Zimbabwe", capital: "Harare", emoji: "🇿🇼" },
+  { code: "XK", name: "Kosovo", capital: "Pristina", emoji: "🇽🇰" },
+  { code: "PS", name: "Palestine", capital: "Ramallah", emoji: "🇵🇸" },
+  { code: "VA", name: "Vatican City", capital: "Vatican City", emoji: "🇻🇦" },
 ];
