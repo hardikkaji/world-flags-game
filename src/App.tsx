@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { countries } from "./data/countries";
 import { countryContinent, continentColors, continentEmoji, allContinents, type Continent } from "./data/continents";
 import type { Country } from "./types";
@@ -17,14 +17,44 @@ function App() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [filterMode, setFilterMode] = useState<FilterMode>("all");
 
+  // Check if fullscreen is supported by this browser/device
+  const supportsFullscreen =
+    document.fullscreenEnabled ||
+    (document as unknown as Record<string, unknown>)["webkitFullscreenEnabled"] === true;
+
   const toggleFullscreen = useCallback(() => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-      setIsFullscreen(true);
+    const doc = document as unknown as Record<string, unknown>;
+    const el = document.documentElement as unknown as Record<string, unknown>;
+
+    const isFs = !!(document.fullscreenElement || doc["webkitFullscreenElement"]);
+
+    if (!isFs) {
+      if (typeof el["requestFullscreen"] === "function") {
+        (el["requestFullscreen"] as () => Promise<void>)();
+      } else if (typeof el["webkitRequestFullscreen"] === "function") {
+        (el["webkitRequestFullscreen"] as () => void)();
+      }
     } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
+      if (typeof document.exitFullscreen === "function") {
+        document.exitFullscreen();
+      } else if (typeof doc["webkitExitFullscreen"] === "function") {
+        (doc["webkitExitFullscreen"] as () => void)();
+      }
     }
+  }, []);
+
+  // Sync state with actual fullscreen changes (e.g. user presses Escape)
+  useEffect(() => {
+    const onChange = () => {
+      const doc = document as unknown as Record<string, unknown>;
+      setIsFullscreen(!!(document.fullscreenElement || doc["webkitFullscreenElement"]));
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    document.addEventListener("webkitfullscreenchange", onChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", onChange);
+      document.removeEventListener("webkitfullscreenchange", onChange);
+    };
   }, []);
 
   // Sorted + grouped data
@@ -77,7 +107,8 @@ function App() {
             <span className="sr-only">Settings</span>
           </button>
 
-          {/* Fullscreen button */}
+          {/* Fullscreen button — only shown if device supports it */}
+          {supportsFullscreen && (
           <button
             onClick={toggleFullscreen}
             title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
@@ -97,6 +128,7 @@ function App() {
             )}
             <span className="sr-only">{isFullscreen ? "Exit fullscreen" : "Fullscreen"}</span>
           </button>
+          )}
         </div>
       </header>
 
