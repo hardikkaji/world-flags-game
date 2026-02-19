@@ -14,6 +14,7 @@ function App() {
     return saved ? parseFloat(saved) : 0.9;
   });
   const [showSettings, setShowSettings] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [filterMode, setFilterMode] = useState<FilterMode>("all");
 
@@ -94,6 +95,23 @@ function App() {
             <p className="text-xs text-gray-500">{countries.length} countries to explore</p>
           </div>
 
+          {/* Filter toggle button */}
+          <button
+            onClick={() => setShowFilter((v) => !v)}
+            title={showFilter ? "Hide filters" : "Show filters"}
+            className={`w-10 h-10 flex items-center justify-center rounded-2xl text-white text-lg
+                       shadow-md hover:shadow-lg hover:-translate-y-0.5 active:scale-95
+                       transition-all duration-150
+                       ${showFilter
+                         ? "bg-gradient-to-br from-orange-400 to-pink-500"
+                         : "bg-gradient-to-br from-emerald-400 to-teal-500"}`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 4h18M7 8h10M10 12h4" />
+            </svg>
+            <span className="sr-only">{showFilter ? "Hide filters" : "Show filters"}</span>
+          </button>
+
           {/* Settings button */}
           <button
             onClick={() => setShowSettings(true)}
@@ -132,8 +150,10 @@ function App() {
         </div>
       </header>
 
-      {/* Filter Bar */}
-      <FilterBar mode={filterMode} onModeChange={setFilterMode} />
+      {/* Filter Bar — slides in/out */}
+      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showFilter ? "max-h-24 opacity-100" : "max-h-0 opacity-0"}`}>
+        <FilterBar mode={filterMode} onModeChange={setFilterMode} />
+      </div>
 
       {/* Grid */}
       <main className="max-w-4xl mx-auto px-4 py-8 space-y-10">
