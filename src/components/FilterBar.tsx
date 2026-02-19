@@ -1,3 +1,5 @@
+import { useIntl } from "react-intl";
+
 export type FilterMode = "all" | "alpha" | "continent";
 
 interface FilterBarProps {
@@ -6,6 +8,7 @@ interface FilterBarProps {
 }
 
 export function FilterBar({ mode, onModeChange }: FilterBarProps) {
+  const intl = useIntl();
   return (
     <div className="sticky top-[64px] z-30 bg-white/80 backdrop-blur-md border-b border-white/50 shadow-sm">
       <div className="max-w-4xl mx-auto px-4 py-3 flex gap-2">
@@ -16,7 +19,7 @@ export function FilterBar({ mode, onModeChange }: FilterBarProps) {
               ? "bg-gradient-to-r from-violet-500 to-pink-500 text-white shadow-md scale-105"
               : "bg-white text-gray-500 shadow-sm hover:shadow-md hover:-translate-y-0.5 border border-gray-100"}`}
         >
-          🌐 All
+          {intl.formatMessage({ id: "filter.all" })}
         </button>
         <button
           onClick={() => onModeChange("alpha")}
@@ -25,7 +28,7 @@ export function FilterBar({ mode, onModeChange }: FilterBarProps) {
               ? "bg-gradient-to-r from-violet-500 to-pink-500 text-white shadow-md scale-105"
               : "bg-white text-gray-500 shadow-sm hover:shadow-md hover:-translate-y-0.5 border border-gray-100"}`}
         >
-          🔤 A – Z
+          {intl.formatMessage({ id: "filter.az" })}
         </button>
         <button
           onClick={() => onModeChange("continent")}
@@ -34,7 +37,7 @@ export function FilterBar({ mode, onModeChange }: FilterBarProps) {
               ? "bg-gradient-to-r from-violet-500 to-pink-500 text-white shadow-md scale-105"
               : "bg-white text-gray-500 shadow-sm hover:shadow-md hover:-translate-y-0.5 border border-gray-100"}`}
         >
-          🌍 Continents
+          {intl.formatMessage({ id: "filter.continents" })}
         </button>
       </div>
     </div>

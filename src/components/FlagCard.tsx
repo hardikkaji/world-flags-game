@@ -1,4 +1,7 @@
+import { useMemo } from "react";
+import { useIntl } from "react-intl";
 import type { Country } from "../types";
+import { getLocalizedCountryName } from "../i18n/messages";
 
 interface FlagCardProps {
   country: Country;
@@ -19,7 +22,12 @@ const cardColors = [
 ];
 
 export function FlagCard({ country, onClick, index }: FlagCardProps) {
+  const intl = useIntl();
   const colorClass = cardColors[index % cardColors.length];
+  const localizedName = useMemo(
+    () => getLocalizedCountryName(country.code, intl.locale, country.name),
+    [country.code, country.name, intl.locale]
+  );
 
   return (
     <button
@@ -30,7 +38,7 @@ export function FlagCard({ country, onClick, index }: FlagCardProps) {
                   active:scale-95 active:shadow-md
                   transition-all duration-200 ease-out w-full overflow-hidden
                   focus:outline-none focus:ring-4 focus:ring-white/60`}
-      aria-label={`${country.name} flag`}
+      aria-label={`${localizedName} flag`}
     >
       {/* Bubbly top-right decoration */}
       <div className="absolute -top-3 -right-3 w-10 h-10 bg-white/25 rounded-full" />
@@ -43,7 +51,7 @@ export function FlagCard({ country, onClick, index }: FlagCardProps) {
           className="text-4xl leading-none select-none
                      group-hover:animate-[wobble_0.6s_ease-out]"
           role="img"
-          aria-label={`Flag of ${country.name}`}
+          aria-label={`Flag of ${localizedName}`}
         >
           {country.emoji}
         </span>
@@ -51,7 +59,7 @@ export function FlagCard({ country, onClick, index }: FlagCardProps) {
 
       {/* Country name */}
       <span className="text-xs font-black text-white text-center leading-tight line-clamp-2 drop-shadow-sm tracking-wide uppercase">
-        {country.name}
+        {localizedName}
       </span>
     </button>
   );

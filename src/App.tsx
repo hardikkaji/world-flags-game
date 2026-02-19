@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
+import { IntlProvider, useIntl } from "react-intl";
 import { countries } from "./data/countries";
 import { countryContinent, continentColors, continentEmoji, allContinents, type Continent } from "./data/continents";
 import type { Country } from "./types";
@@ -6,8 +7,18 @@ import { FlagCard } from "./components/FlagCard";
 import { FlagModal } from "./components/FlagModal";
 import { SettingsPanel } from "./components/SettingsPanel";
 import { FilterBar, type FilterMode } from "./components/FilterBar";
+import { LanguagePicker } from "./components/LanguagePicker";
+import { messages, getLocalizedCountryName, type AppLocale } from "./i18n/messages";
 
-function App() {
+// ─── Inner app (has access to IntlProvider context) ─────────────────────────
+
+interface AppContentProps {
+  locale: AppLocale;
+  onLocaleChange: (locale: AppLocale) => void;
+}
+
+function AppContent({ locale, onLocaleChange }: AppContentProps) {
+  const intl = useIntl();
   const [selected, setSelected] = useState<Country | null>(null);
   const [speechRate, setSpeechRate] = useState(() => {
     const saved = localStorage.getItem("speechRate");
@@ -58,9 +69,13 @@ function App() {
     };
   }, []);
 
-  // Sorted + grouped data
+  // Sorted + grouped data — sorted by localized name
   const display = useMemo(() => {
-    const sorted = [...countries].sort((a, b) => a.name.localeCompare(b.name));
+    const sorted = [...countries].sort((a, b) => {
+      const nameA = getLocalizedCountryName(a.code, locale, a.name);
+      const nameB = getLocalizedCountryName(b.code, locale, b.name);
+      return nameA.localeCompare(nameB, locale);
+    });
 
     if (filterMode === "all") {
       return [{ label: null, items: sorted }];
@@ -69,7 +84,8 @@ function App() {
     if (filterMode === "alpha") {
       const groups: Record<string, Country[]> = {};
       for (const c of sorted) {
-        const letter = c.name[0].toUpperCase();
+        const localizedName = getLocalizedCountryName(c.code, locale, c.name);
+        const letter = localizedName[0].toUpperCase();
         if (!groups[letter]) groups[letter] = [];
         groups[letter].push(c);
       }
@@ -80,7 +96,7 @@ function App() {
       label: continent,
       items: sorted.filter((c) => countryContinent[c.code] === continent),
     })).filter((g) => g.items.length > 0);
-  }, [filterMode]);
+  }, [filterMode, locale]);
 
   let globalIndex = 0;
 
@@ -91,8 +107,12 @@ function App() {
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
           <span className="text-3xl">🌍</span>
           <div className="flex-1">
-            <h1 className="text-xl font-bold text-gray-800 leading-tight">World Flags</h1>
-            <p className="text-xs text-gray-500">{countries.length} countries to explore</p>
+            <h1 className="text-xl font-bold text-gray-800 leading-tight">
+              {intl.formatMessage({ id: "app.title" })}
+            </h1>
+            <p className="text-xs text-gray-500">
+              {intl.formatMessage({ id: "app.subtitle" }, { count: countries.length })}
+            </p>
           </div>
 
           {/* Filter toggle button */}
@@ -170,7 +190,9 @@ function App() {
                   {filterMode === "continent" ? continentEmoji[group.label as Continent] : group.label}
                 </span>
                 {filterMode === "continent" && (
-                  <h2 className="text-lg font-black text-white tracking-wide">{group.label}</h2>
+                  <h2 className="text-lg font-black text-white tracking-wide">
+                    {intl.formatMessage({ id: `continent.${group.label}` })}
+                  </h2>
                 )}
                 <span className="bg-white/30 text-white text-xs font-black px-2 py-0.5 rounded-full">
                   {group.items.length}
@@ -211,10 +233,37 @@ function App() {
         <SettingsPanel
           speechRate={speechRate}
           onRateChange={(rate) => { setSpeechRate(rate); localStorage.setItem("speechRate", String(rate)); }}
+          locale={locale}
+          onLocaleChange={onLocaleChange}
           onClose={() => setShowSettings(false)}
         />
       )}
     </div>
+  );
+}
+
+// ─── Root app — handles locale selection before rendering IntlProvider ───────
+
+function App() {
+  const [locale, setLocale] = useState<AppLocale | null>(() => {
+    const saved = localStorage.getItem("appLanguage");
+    return (saved === "en" || saved === "sv") ? saved : null;
+  });
+
+  const handleLocaleChange = useCallback((lang: AppLocale) => {
+    localStorage.setItem("appLanguage", lang);
+    setLocale(lang);
+  }, []);
+
+  // Show language picker on first launch (cannot be dismissed)
+  if (!locale) {
+    return <LanguagePicker onSelect={handleLocaleChange} />;
+  }
+
+  return (
+    <IntlProvider locale={locale} messages={messages[locale]}>
+      <AppContent locale={locale} onLocaleChange={handleLocaleChange} />
+    </IntlProvider>
   );
 }
 
