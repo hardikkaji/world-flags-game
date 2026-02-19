@@ -40,7 +40,17 @@
 - `Intl.DisplayNames` handles country name localization without maintaining a giant
   translation file — falls back to the English name for unsupported codes (e.g. XK for Kosovo).
 
-## PWA / vite-plugin-pwa
+## Design System / Refactoring
+
+- Extract design tokens before refactoring components — prevents having to update multiple files.
+- When multiple components share a button pattern, always build the primitive first (`Button.tsx`)
+  then update consumers, not the other way around.
+- `Modal.tsx` with a `variant` prop (`"overlay"` | `"sheet"`) is cleaner than two separate components
+  when the only difference is layout.
+- Keep `const RATES = [...]` and similar config arrays at module scope (outside the component) so they
+  are not recreated on every render.
+- Custom hooks (`useFullscreen`, `useSpeech`, `useCountryGrouping`) keep components focused on
+  rendering only — makes them much easier to read and test.
 
 - PNG icons must be pre-generated and placed in `public/` — the plugin does not auto-generate them.
 - Add `apple-touch-icon` + `apple-mobile-web-app-*` meta tags for iOS home screen support.

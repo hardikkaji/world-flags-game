@@ -23,9 +23,14 @@
   - Continent names translated
   - Locale-aware A-Z sorting
 
-## In Progress
-
-_(nothing currently in progress)_
+- [x] Codebase refactor — DRY / SOLID / Design System
+  - `src/ui/tokens.ts` — single source of truth for gradients, shadows, button base classes
+  - `src/ui/Button.tsx` — `IconButton`, `PillButton`, `OptionButton`, `GradientButton`
+  - `src/ui/Modal.tsx` — shared modal wrapper (backdrop, escape, body scroll lock, two variants)
+  - `src/hooks/useFullscreen.ts` — cross-browser fullscreen logic
+  - `src/hooks/useSpeech.ts` — speech synthesis with speaking state
+  - `src/hooks/useCountryGrouping.ts` — sorting + grouping logic
+  - Refactored App.tsx, FlagModal, SettingsPanel, FilterBar, FlagCard, LanguagePicker
 
 ## Backlog
 

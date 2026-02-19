@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useIntl } from "react-intl";
 import type { Country } from "../types";
 import { getLocalizedCountryName } from "../i18n/messages";
+import { cardGradients } from "../ui/tokens";
 
 interface FlagCardProps {
   country: Country;
@@ -10,20 +11,11 @@ interface FlagCardProps {
 }
 
 // Rotating vibrant card bg colors — kid friendly palette
-const cardColors = [
-  "from-red-400 to-orange-300",
-  "from-orange-400 to-yellow-300",
-  "from-yellow-400 to-lime-300",
-  "from-emerald-400 to-teal-300",
-  "from-cyan-400 to-blue-300",
-  "from-blue-400 to-indigo-300",
-  "from-violet-400 to-purple-300",
-  "from-pink-400 to-rose-300",
-];
+// (defined centrally in tokens.ts)
 
 export function FlagCard({ country, onClick, index }: FlagCardProps) {
   const intl = useIntl();
-  const colorClass = cardColors[index % cardColors.length];
+  const colorClass = cardGradients[index % cardGradients.length];
   const localizedName = useMemo(
     () => getLocalizedCountryName(country.code, intl.locale, country.name),
     [country.code, country.name, intl.locale]
