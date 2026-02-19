@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { useCountryGrouping } from '../useCountryGrouping';
+import { useCountryGrouping } from '../use-country-grouping';
 import { countries } from '../../data/countries';
 import { getLocalizedCountryName } from '../../i18n/messages';
 

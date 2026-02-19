@@ -3,8 +3,8 @@ import { useIntl } from "react-intl";
 import type { Country } from "../types";
 import { getLocalizedCountryName, LOCALE_TTS } from "../i18n/messages";
 import type { AppLocale } from "../i18n/messages";
-import { Modal } from "../ui/Modal";
-import { useSpeech } from "../hooks/useSpeech";
+import { Modal } from "../ui/modal";
+import { useSpeech } from "../hooks/use-speech";
 
 interface FlagModalProps {
   country: Country | null;

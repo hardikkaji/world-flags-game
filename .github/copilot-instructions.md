@@ -48,9 +48,9 @@
 - **Test framework**: Use **Vitest** for all unit and integration tests
 - **Coverage requirement**: Write tests for EVERY task that adds or changes logic
 - **Test file location**: Co-locate tests next to source — `foo.ts` → `foo.test.ts`
-  - Hooks: `src/hooks/__tests__/useFullscreen.test.ts`
+  - Hooks: `src/hooks/__tests__/use-fullscreen.test.ts`
   - Utils / i18n: `src/i18n/__tests__/messages.test.ts`
-  - UI components: `src/components/__tests__/FlagCard.test.tsx`
+  - UI components: `src/components/__tests__/flag-card.test.tsx`
 - **What to test** (minimum bar):
   - All custom hooks (happy path + edge cases)
   - All pure utility functions
@@ -81,6 +81,16 @@
 6. **Document Results**: Add review section to tasks/todo.md
 7. **Capture Lessons**: Update tasks/lessons.md after corrections
 8. **Final Gate**: `pnpm test && pnpm build` must pass before committing
+
+## File & Folder Naming
+
+- **Always use kebab-case** for all file and folder names — no exceptions
+  - ✅ `flag-card.tsx`, `use-speech.ts`, `filter-bar.tsx`, `language-picker.tsx`
+  - ❌ `FlagCard.tsx`, `useSpeech.ts`, `FilterBar.tsx`, `LanguagePicker.tsx`
+- **React components**: kebab-case filename, PascalCase export — e.g. `flag-card.tsx` exports `FlagCard`
+- **Hooks**: `use-{name}.ts` — e.g. `use-speech.ts`, `use-fullscreen.ts`
+- **Tests**: co-located, same kebab-case base — e.g. `use-speech.test.ts`
+- **Folders**: also kebab-case — e.g. `__tests__/`, `i18n/`, `ui/`
 
 ## Core Principles
 

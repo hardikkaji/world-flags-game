@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { countries } from "../data/countries";
 import { countryContinent, allContinents } from "../data/continents";
 import type { Country } from "../types";
-import type { FilterMode } from "../components/FilterBar";
+import type { FilterMode } from "../components/filter-bar";
 import { getLocalizedCountryName } from "../i18n/messages";
 
 export interface CountryGroup {

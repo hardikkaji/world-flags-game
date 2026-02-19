@@ -1,5 +1,5 @@
 import { useIntl } from "react-intl";
-import { PillButton } from "../ui/Button";
+import { PillButton } from "../ui/button";
 
 export type FilterMode = "all" | "alpha" | "continent";
 

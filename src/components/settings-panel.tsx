@@ -1,7 +1,7 @@
 import { useIntl } from "react-intl";
 import type { AppLocale } from "../i18n/messages";
-import { Modal } from "../ui/Modal";
-import { OptionButton, GradientButton } from "../ui/Button";
+import { Modal } from "../ui/modal";
+import { OptionButton, GradientButton } from "../ui/button";
 
 interface SettingsPanelProps {
   speechRate: number;

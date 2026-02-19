@@ -3,16 +3,16 @@ import { IntlProvider, useIntl } from "react-intl";
 import { countries } from "./data/countries";
 import { continentColors, continentEmoji, type Continent } from "./data/continents";
 import type { Country } from "./types";
-import { FlagCard } from "./components/FlagCard";
-import { FlagModal } from "./components/FlagModal";
-import { SettingsPanel } from "./components/SettingsPanel";
-import { FilterBar, type FilterMode } from "./components/FilterBar";
-import { LanguagePicker } from "./components/LanguagePicker";
+import { FlagCard } from "./components/flag-card";
+import { FlagModal } from "./components/flag-modal";
+import { SettingsPanel } from "./components/settings-panel";
+import { FilterBar, type FilterMode } from "./components/filter-bar";
+import { LanguagePicker } from "./components/language-picker";
 import { messages, type AppLocale } from "./i18n/messages";
-import { IconButton } from "./ui/Button";
+import { IconButton } from "./ui/button";
 import { gradients } from "./ui/tokens";
-import { useFullscreen } from "./hooks/useFullscreen";
-import { useCountryGrouping } from "./hooks/useCountryGrouping";
+import { useFullscreen } from "./hooks/use-fullscreen";
+import { useCountryGrouping } from "./hooks/use-country-grouping";
 
 // ─── Inner app (has access to IntlProvider context) ─────────────────────────
 
