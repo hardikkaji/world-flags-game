@@ -1,9 +1,11 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { countries } from "./data/countries";
+import { countryContinent, continentColors, continentEmoji, allContinents, type Continent } from "./data/continents";
 import type { Country } from "./types";
 import { FlagCard } from "./components/FlagCard";
 import { FlagModal } from "./components/FlagModal";
 import { SettingsPanel } from "./components/SettingsPanel";
+import { FilterBar, type FilterMode } from "./components/FilterBar";
 
 function App() {
   const [selected, setSelected] = useState<Country | null>(null);
@@ -13,6 +15,7 @@ function App() {
   });
   const [showSettings, setShowSettings] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [filterMode, setFilterMode] = useState<FilterMode>("all");
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
@@ -23,6 +26,32 @@ function App() {
       setIsFullscreen(false);
     }
   }, []);
+
+  // Sorted + grouped data
+  const display = useMemo(() => {
+    const sorted = [...countries].sort((a, b) => a.name.localeCompare(b.name));
+
+    if (filterMode === "all") {
+      return [{ label: null, items: sorted }];
+    }
+
+    if (filterMode === "alpha") {
+      const groups: Record<string, Country[]> = {};
+      for (const c of sorted) {
+        const letter = c.name[0].toUpperCase();
+        if (!groups[letter]) groups[letter] = [];
+        groups[letter].push(c);
+      }
+      return Object.entries(groups).map(([letter, items]) => ({ label: letter, items }));
+    }
+
+    return allContinents.map((continent) => ({
+      label: continent,
+      items: sorted.filter((c) => countryContinent[c.code] === continent),
+    })).filter((g) => g.items.length > 0);
+  }, [filterMode]);
+
+  let globalIndex = 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-100 via-purple-50 to-pink-100">
@@ -58,12 +87,10 @@ function App() {
                        transition-all duration-150"
           >
             {isFullscreen ? (
-              /* Compress / exit fullscreen icon */
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 9V4m0 5H4m11-5v5m0 0h5M9 20v-5m0 0H4m11 5v-5m0 0h5" />
               </svg>
             ) : (
-              /* Expand / enter fullscreen icon */
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
               </svg>
@@ -73,20 +100,49 @@ function App() {
         </div>
       </header>
 
-      {/* Grid */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {countries.map((country, i) => (
-            <FlagCard
-              key={country.code}
-              country={country}
-              index={i}
-              onClick={setSelected}
-            />
-          ))}
-        </div>
+      {/* Filter Bar */}
+      <FilterBar mode={filterMode} onModeChange={setFilterMode} />
 
-        <p className="text-center text-gray-400 text-sm mt-10">
+      {/* Grid */}
+      <main className="max-w-4xl mx-auto px-4 py-8 space-y-10">
+        {display.map((group) => (
+          <section key={group.label ?? "all"}>
+            {/* Section header — hidden in All mode */}
+            {group.label && (
+              <div className={`flex items-center gap-3 mb-5 px-4 py-2.5 rounded-2xl w-fit shadow-md
+                ${filterMode === "continent"
+                  ? `bg-gradient-to-r ${continentColors[group.label as Continent]}`
+                  : "bg-gradient-to-r from-violet-500 to-pink-500"}`}
+              >
+                <span className="text-2xl font-black text-white">
+                  {filterMode === "continent" ? continentEmoji[group.label as Continent] : group.label}
+                </span>
+                {filterMode === "continent" && (
+                  <h2 className="text-lg font-black text-white tracking-wide">{group.label}</h2>
+                )}
+                <span className="bg-white/30 text-white text-xs font-black px-2 py-0.5 rounded-full">
+                  {group.items.length}
+                </span>
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {group.items.map((country) => {
+                const idx = globalIndex++;
+                return (
+                  <FlagCard
+                    key={country.code}
+                    country={country}
+                    index={idx}
+                    onClick={setSelected}
+                  />
+                );
+              })}
+            </div>
+          </section>
+        ))}
+
+        <p className="text-center text-gray-400 text-sm mt-4">
           🎉 All {countries.length} countries!
         </p>
       </main>
