@@ -21,15 +21,16 @@ export function FlagModal({ country, speechRate, onClose }: FlagModalProps) {
   );
 
   const ttsLang = LOCALE_TTS[intl.locale as AppLocale] ?? "en-US";
-  const { speaking, speak } = useSpeech({ rate: speechRate, lang: ttsLang });
+  const { speaking, speak, cancel } = useSpeech({ rate: speechRate, lang: ttsLang });
 
   const speechText = country
     ? intl.formatMessage({ id: "modal.speech.text" }, { name: localizedName, capital: country.capital })
     : "";
 
-  // Auto-speak when the modal opens / country changes
+  // Auto-speak when modal opens; cancel when it closes
   useEffect(() => {
     if (country && speechText) speak(speechText);
+    else cancel();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [country, speechText]);
 
